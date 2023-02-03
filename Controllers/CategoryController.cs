@@ -42,6 +42,7 @@ namespace BulkyBookWeb.Controllers
             {
                 _db.Categories.Add(obj);
                 _db.SaveChanges();//Just at this point saves the changes in the database
+                TempData["success"] = "Category created sucessfully";
                 return RedirectToAction("Index");
             }
             return View(obj);
@@ -54,6 +55,9 @@ namespace BulkyBookWeb.Controllers
             {
                 return NotFound();
             }
+
+            //var categoryFromDbSingle = _db.Categories.SingleOrDefault(u=>u.Id == id);
+            //var categoryFromDbFirst = _db.Categories.FirstOrDefault(u=>u.Id == id);
             var categoryFromDb = _db.Categories.Find(id);
 
             if (categoryFromDb == null)
@@ -76,10 +80,48 @@ namespace BulkyBookWeb.Controllers
             {
                 _db.Categories.Update(obj);
                 _db.SaveChanges();//Just at this point saves the changes in the database
+                TempData["success"] = "Category updated sucessfully";
                 return RedirectToAction("Index");
             }
             return View(obj);
         }
 
+        //Get
+        public IActionResult Delete(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            //var categoryFromDbSingle = _db.Categories.SingleOrDefault(u=>u.Id == id);
+            //var categoryFromDbFirst = _db.Categories.FirstOrDefault(u=>u.Id == id);
+            var categoryFromDb = _db.Categories.Find(id);
+
+            if (categoryFromDb == null)
+            {
+                return NotFound();
+            }
+            return View(categoryFromDb);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeletePost(int? id)
+        {
+            var categoryFromDb = _db.Categories.Find(id);
+
+            if (categoryFromDb == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                _db.Categories.Remove(categoryFromDb);
+                _db.SaveChanges();//Just at this point saves the changes in the database
+                TempData["success"] = "Category deleted sucessfully";
+                return RedirectToAction("Index");
+            }
+        }
     }
 }
